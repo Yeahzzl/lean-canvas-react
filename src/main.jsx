@@ -5,11 +5,36 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 // import App from './AppTailwindCSS.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Home from './pages/Home';
+import App from './App';
+import ErrorPage from './pages/ErrorPage';
+import CanvasDetail from './pages/CanvasDetail';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <div>Hello World</div>,
+    element: <App />,
+    children: [
+      {
+        path: '',
+        element: <Home />,
+      },
+      {
+        path: 'about',
+        element: <About />,
+      },
+      {
+        path: 'contact',
+        element: <Contact />,
+      },
+      {
+        path: 'canvases/:id',
+        element: <CanvasDetail />,
+      },
+    ],
+    errorElement: <ErrorPage />,
   },
 ]);
 

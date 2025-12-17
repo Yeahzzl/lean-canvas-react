@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import CanvasList from '../components/CanvasList';
 import SearchBar from '../components/SearchBar';
 import ViewToggle from '../components/ViewToggle';
+import { getCanvases } from '../../api/canvas';
 
 function Home() {
   const [searchText, setSearchText] = useState('');
@@ -9,10 +10,13 @@ function Home() {
   const [data, setData] = useState([]);
 
   async function fetchData() {
-    const data = await fetch('http://localhost:8000/canvases')
-      .then(res => res.json())
-      .catch(err => console.error('에러발생', err));
-    setData(data);
+    // const data = await fetch('http://localhost:8000/canvases')
+    //   .then(res => res.json())
+    //   .catch(err => console.error('에러발생', err));
+    const response = await getCanvases();
+    console.log(response);
+
+    setData(response.data);
   }
 
   useEffect(() => {

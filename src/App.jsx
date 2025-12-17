@@ -1,11 +1,14 @@
 import { Outlet } from 'react-router';
-import Header from './Header';
+import Header from './components/Header';
+import Main from './components/Main';
 
 function App(props) {
   return (
     <>
       <Header />
-      <Outlet />
+      <Main>
+        <Outlet />
+      </Main>
     </>
   );
 }

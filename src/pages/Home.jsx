@@ -5,7 +5,7 @@ import ViewToggle from '../components/ViewToggle';
 import { getCanvases } from '../../api/canvas';
 
 function Home() {
-  const [searchText, setSearchText] = useState();
+  const [searchText, setSearchText] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isGridView, setIsGridView] = useState(true);
   const [data, setData] = useState([]);
@@ -13,13 +13,8 @@ function Home() {
   async function fetchData(params) {
     const response = await getCanvases(params);
     // console.log(response);
-
     setData(response.data);
   }
-
-  useEffect(() => {
-    fetchData(searchKeyword ? { title_like: searchText } : {});
-  }, [searchKeyword]);
 
   const handleDeleteItem = id => {
     setData(data.filter(item => item.id !== id));
@@ -28,6 +23,20 @@ function Home() {
   const handleSearch = () => {
     setSearchKeyword(searchText);
   };
+
+  useEffect(() => {
+    if (searchKeyword?.trim() === '') {
+      fetchData();
+    } else {
+      fetchData({ title_like: searchText });
+    }
+  }, [searchKeyword]);
+
+  useEffect(() => {
+    if (searchText === '') {
+      setSearchKeyword('');
+    }
+  }, [searchText]);
 
   return (
     <div className="container mx-auto px-4 py-16">

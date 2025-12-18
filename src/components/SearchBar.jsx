@@ -1,6 +1,6 @@
 import { FaSearch } from 'react-icons/fa';
 
-function SearchBar({ searchText, setSearchText }) {
+function SearchBar({ searchText, setSearchText, handleSearch }) {
   return (
     <div className="relative w-full sm:w-64 mb-4 sm:mb-0">
       <input
@@ -10,8 +10,16 @@ function SearchBar({ searchText, setSearchText }) {
         aria-label="검색"
         value={searchText}
         onChange={e => setSearchText(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            handleSearch();
+          }
+        }}
       />
-      <FaSearch className="absolute left-3 top-3 text-gray-400" />
+      <FaSearch
+        className="absolute left-3 top-3 text-gray-400"
+        onClick={handleSearch}
+      />
     </div>
   );
 }

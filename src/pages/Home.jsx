@@ -5,39 +5,42 @@ import ViewToggle from '../components/ViewToggle';
 import { getCanvases } from '../../api/canvas';
 
 function Home() {
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState();
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [isGridView, setIsGridView] = useState(true);
   const [data, setData] = useState([]);
 
-  async function fetchData() {
-    // const data = await fetch('http://localhost:8000/canvases')
-    //   .then(res => res.json())
-    //   .catch(err => console.error('에러발생', err));
-    const response = await getCanvases();
-    console.log(response);
+  async function fetchData(params) {
+    const response = await getCanvases(params);
+    // console.log(response);
 
     setData(response.data);
   }
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(searchKeyword ? { title_like: searchText } : {});
+  }, [searchKeyword]);
 
   const handleDeleteItem = id => {
     setData(data.filter(item => item.id !== id));
   };
-  const filteredData = data.filter(item => {
-    return item.title.toLowerCase().includes(searchText.toLowerCase());
-  });
+
+  const handleSearch = () => {
+    setSearchKeyword(searchText);
+  };
 
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="mb-6 flex flex-col sm:flex-row items-center justify-between">
-        <SearchBar searchText={searchText} setSearchText={setSearchText} />
+        <SearchBar
+          searchText={searchText}
+          setSearchText={setSearchText}
+          handleSearch={handleSearch}
+        />
         <ViewToggle isGridView={isGridView} setIsGridView={setIsGridView} />
       </div>
       <CanvasList
-        filteredData={filteredData}
+        filteredData={data}
         searchText={searchText}
         isGridView={isGridView}
         onDeleteItem={handleDeleteItem}

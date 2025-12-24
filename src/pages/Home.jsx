@@ -4,7 +4,7 @@ import SearchBar from '../components/SearchBar';
 import ViewToggle from '../components/ViewToggle';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
-import { createCanvas, getCanvases } from '../api/canvas';
+import { createCanvas, deleteCanvas, getCanvases } from '../api/canvas';
 import Button from '../components/Button';
 
 function Home() {
@@ -31,8 +31,18 @@ function Home() {
     }
   }
 
-  const handleDeleteItem = id => {
-    setData(data.filter(item => item.id !== id));
+  const handleDeleteItem = async id => {
+    // setData(data.filter(item => item.id !== id));
+    if (confirm('삭제하시겠습니까?') === false) {
+      return;
+    }
+    // delete logic
+    try {
+      await deleteCanvas(id);
+      fetchData({ title_like: searchText });
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleSearch = () => {
@@ -46,7 +56,7 @@ function Home() {
       await createCanvas();
       fetchData({ title_like: searchText });
     } catch (err) {
-      console.log(err.message);
+      alert(err.message);
     } finally {
       setIsLoadingCreate(false);
     }

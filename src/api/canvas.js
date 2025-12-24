@@ -25,3 +25,16 @@ export function createCanvas() {
 }
 
 // 삭제
+export async function deleteCanvas(id) {
+  await canvases.delete(`/${id}`);
+}
+
+// 카드 타이틀 가져와서 수정
+export async function getCanvasById(id) {
+  const { data } = await canvases.get(`/${id}`);
+  return data;
+}
+
+export async function updateTitle(id, title) {
+  await canvases.patch(`/${id}`, { title });
+}

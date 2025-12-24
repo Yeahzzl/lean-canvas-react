@@ -2,18 +2,33 @@ import { useEffect, useState } from 'react';
 import CanvasList from '../components/CanvasList';
 import SearchBar from '../components/SearchBar';
 import ViewToggle from '../components/ViewToggle';
-import { getCanvases } from '../../api/canvas';
+import Loading from '../components/Loading';
+import Error from '../components/Error';
+import { createCanvas, getCanvases } from '../api/canvas';
+import Button from '../components/Button';
 
 function Home() {
   const [searchText, setSearchText] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isGridView, setIsGridView] = useState(true);
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
   async function fetchData(params) {
-    const response = await getCanvases(params);
-    // console.log(response);
-    setData(response.data);
+    try {
+      setIsLoading(true);
+      setError(null);
+      await new Promise(resolver => setTimeout(resolver, 1000));
+      const response = await getCanvases(params);
+      // console.log(response);
+      setData(response.data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const handleDeleteItem = id => {
@@ -22,6 +37,19 @@ function Home() {
 
   const handleSearch = () => {
     setSearchKeyword(searchText);
+  };
+
+  const handleCreateCanvas = async () => {
+    try {
+      setIsLoadingCreate(true);
+      await new Promise(resolver => setTimeout(resolver, 1000));
+      await createCanvas();
+      fetchData({ title_like: searchText });
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setIsLoadingCreate(false);
+    }
   };
 
   useEffect(() => {
@@ -48,12 +76,27 @@ function Home() {
         />
         <ViewToggle isGridView={isGridView} setIsGridView={setIsGridView} />
       </div>
-      <CanvasList
-        filteredData={data}
-        searchText={searchText}
-        isGridView={isGridView}
-        onDeleteItem={handleDeleteItem}
-      />
+      <div className="flex justify-end mb-6">
+        <Button onClick={handleCreateCanvas} loading={isLoadingCreate}>
+          등록하기
+        </Button>
+      </div>
+
+      {isLoading && <Loading />}
+      {error && (
+        <Error
+          message={error.message}
+          onRetry={() => fetchData({ title_like: searchText })}
+        />
+      )}
+      {!isLoading && !error && (
+        <CanvasList
+          filteredData={data}
+          searchText={searchText}
+          isGridView={isGridView}
+          onDeleteItem={handleDeleteItem}
+        />
+      )}
     </div>
   );
 }

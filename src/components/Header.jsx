@@ -6,7 +6,7 @@ import {
   FaInfoCircle,
   FaTimes,
 } from 'react-icons/fa';
-import { useNavigate, Link, NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import Button from './Button';
 // import './Header.css';
 
